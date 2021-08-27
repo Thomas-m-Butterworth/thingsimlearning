@@ -18,6 +18,7 @@ When we have two classes that are similar, it isn't clean to always repeat that 
 
 When an inherited class needs additional attributes (e.g. We want to know the colour), write the init as you would if there were no parent class.
 
+    ```python
     class ParentClass:
         def __init__(self, name, age):
             self.name = name
@@ -27,6 +28,7 @@ When an inherited class needs additional attributes (e.g. We want to know the co
         def __init__(self, name, age, color):
             super().__init__(name, age)
             self.color = color
+     ```
 
 Notice that even though the ChildClass takes multiple arguments, we only define the one that varies from ParentClass. This is because re-defining these is pointless, and can undo previous functions if not careful.
 
