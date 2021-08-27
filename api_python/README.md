@@ -5,4 +5,7 @@ My aim is to create an app that searches a title on IMDB, pulls the imdbID, requ
 
 I will also have to learn *Flask* or *Django* (probably both) to run the app.
 
+### Bonus Idea
+Download and analyse my Netlflix viewing data (download from Netflix, learn *panda* library). Run an API request on each title to pull the IMDB rating, produce visual data that shows the correlation between perceived quality and my own viewing habits.
+
 ## Notes
