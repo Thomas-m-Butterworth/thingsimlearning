@@ -10,3 +10,5 @@ A method is performed upon an object, and rely on the type of class. (e.g. x.**s
 ## Creating our own classes
 Define the class (in my example this is the Dog class). Define the operations that this kind of object can perform. Multiple methods can be defined within one class. By default they take the *self* argument, but others can be added (**see *add_one* in Dog.**)
 
+Because a class has infinite reusability, I will be remembering this by humming **"OOPs I did it again"** to myself.
+
