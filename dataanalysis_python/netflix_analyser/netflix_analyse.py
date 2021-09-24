@@ -1,36 +1,64 @@
 import requests
 import json
+import csv
+
+row_count = 0
 
 headers = {
     'x-rapidapi-host': "movie-database-imdb-alternative.p.rapidapi.com",
     'x-rapidapi-key': "2d7c539e81msh16f6f09c455ac6dp12b13cjsn93a46006810d"
-    }
-
-viewing_history = "NetflixViewingHistory.csv"    
-
-movie_query = input("What are you searching for? ")
-
+    }  
+parsed_history = "NetflixParsed.csv"
+expanded_history = "NetflixExpanded.csv"
 imdb_api = "https://movie-database-imdb-alternative.p.rapidapi.com/"
-search_query = {"s":movie_query, "type":"movie", "page":"1"}
 
-response = requests.request("GET", imdb_api, headers=headers, params=search_query)
-imdb = json.loads(response.text)
+def check_title():
+    global row_count
 
-for x in imdb["Search"]:
-    movie_query = movie_query.capitalize()
-    if x['Title'] == movie_query:
-        imdbid = (x['imdbID'])
-        break
+    with open(parsed_history, "r") as csv_history:
+        csv_reader = csv.DictReader(csv_history)
 
-id_query = {"i":imdbid, "type":"movie"}
-id_response = requests.request("GET", imdb_api, headers=headers, params=id_query)
-final_data = json.loads(id_response.text)
+        with open(expanded_history, "w") as new_file:
+            fieldnames = ["title", "release_year", "imdb_id", "genre", "imdb_rating", "date_watched"]
+            csv_writer = csv.DictWriter(new_file, fieldnames = fieldnames)
+            csv_writer.writeheader()
 
-title = final_data['Title']
-genre = final_data['Genre']
-release_year = final_data['Year']
-rating = final_data['imdbRating']
-print(title)
-print(f"Release Year: {release_year}")
-print(genre)
-print(f"Rated {rating} stars!")
+            next(csv_reader)
+            for x in csv_reader:
+                date_watched = x["Date"]
+                movie_query = x["Title"]
+
+                search_query = {"s":movie_query, "type":"movie", "page":"1"}
+
+                response = requests.request("GET", imdb_api, headers=headers, params=search_query)
+                imdb = json.loads(response.text)
+
+                for x in imdb["Search"]:
+                    if x['Title'] == movie_query:
+                        imdbid = x['imdbID']
+
+                        id_query = {"i":imdbid, "type":"movie"}
+                        id_response = requests.request("GET", imdb_api, headers=headers, params=id_query)
+                        final_data = json.loads(id_response.text)
+
+                        title = final_data['Title']
+                        genre = final_data['Genre']
+                        release_year = final_data['Year']
+                        rating = final_data['imdbRating']
+                        rows = {
+                            "title": title,
+                            "release_year": release_year,
+                            "imdb_id": imdbid,
+                            "genre": genre,
+                            "imdb_rating": rating,
+                            "date_watched": date_watched
+                            }
+                            
+                        row_count += 1
+                        csv_writer.writerow(rows)
+                        print(f"{row_count} rows created in {expanded_history}.")
+                        break
+                    else:
+                        pass
+
+check_title()
