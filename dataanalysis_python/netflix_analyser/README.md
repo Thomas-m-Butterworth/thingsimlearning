@@ -13,3 +13,7 @@ The data we have is very limited (only two fields - title, date viewed). This me
     - Limit to 400 so we don't go over RapidAPI's free use quota
 - Input data to a new CSV file
 - New data analysed/visualised later.
+
+## Minor Issues
+- **KeyError** when the search only returns one result. Should be solvable by using .get() to set a default key.
+- Multiple *elif* statements in **netflix_parse.py** a little ugly. Look for cleaner solutions.
