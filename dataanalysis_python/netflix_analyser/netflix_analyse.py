@@ -1,6 +1,6 @@
-import requests
 import json
 import csv
+import requests
 
 row_count = 0
 
@@ -14,6 +14,8 @@ imdb_api = "https://movie-database-imdb-alternative.p.rapidapi.com/"
 
 def check_title():
     global row_count
+    a_dict = {}
+    a_dict.setdefault('missing_key', 'default value')
 
     with open(parsed_history, "r") as csv_history:
         csv_reader = csv.DictReader(csv_history)
@@ -25,20 +27,19 @@ def check_title():
 
             next(csv_reader)
             for x in csv_reader:
-                date_watched = x["Date"]
-                movie_query = x["Title"]
+                date_watched = x.get("Date")
+                movie_query = x.get("Title")
 
                 search_query = {"s":movie_query, "type":"movie", "page":"1"}
 
                 response = requests.request("GET", imdb_api, headers=headers, params=search_query)
                 imdb = json.loads(response.text)
 
-                for x in imdb["Search"]:
-                    if x['Title'] == movie_query:
-                        imdbid = x['imdbID']
-
+                for x in imdb.get("Search"):
+                    if x.get('Title') == movie_query:
+                        imdbid = x.get('imdbID')
                         id_query = {"i":imdbid, "type":"movie"}
-                        id_response = requests.request("GET", imdb_api, headers=headers, params=id_query)
+                        id_response = requests.request("GET", imdb_api, headers=headers, params=id_query)                            
                         final_data = json.loads(id_response.text)
 
                         title = final_data['Title']
@@ -53,7 +54,6 @@ def check_title():
                             "imdb_rating": rating,
                             "date_watched": date_watched
                             }
-                            
                         row_count += 1
                         csv_writer.writerow(rows)
                         print(f"{row_count} rows created in {expanded_history}.")
