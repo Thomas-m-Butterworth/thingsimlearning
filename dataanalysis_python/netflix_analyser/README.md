@@ -16,4 +16,34 @@ The data we have is very limited (only two fields - title, date viewed). This me
 
 ## Minor Issues
 - **KeyError** when the search only returns one result. Should be solvable by using .get() to set a default key.
+    - Different solution used (**try** and **except**:
+                    try:
+                    for x in imdb.get("Search"):
+                        if x.get('Title') == movie_query:
+                            imdbid = x.get('imdbID')
+                            id_query = {"i":imdbid, "type":"movie"}
+                            id_response = requests.request("GET", imdb_api, headers=headers, params=id_query)                            
+                            final_data = json.loads(id_response.text)
+
+                            title = final_data['Title']
+                            genre = final_data['Genre']
+                            release_year = final_data['Year']
+                            rating = final_data['imdbRating']
+                            rows = {
+                                "title": title,
+                                "release_year": release_year,
+                                "imdb_id": imdbid,
+                                "genre": genre,
+                                "imdb_rating": rating,
+                                "date_watched": date_watched
+                                }
+                            row_count += 1
+                            csv_writer.writerow(rows)
+                            print(f"{row_count} rows created in {expanded_history}.")
+                            break
+                        else:
+                            pass
+                except Exception as e:
+                    print("Item Passed!")
+    
 - Multiple *elif* statements in **netflix_parse.py** a little ugly. Look for cleaner solutions.
