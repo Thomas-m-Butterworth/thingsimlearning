@@ -18,7 +18,7 @@ The data we have is very limited (only two fields - title, date viewed). This me
 - **KeyError** when the search only returns one result. Should be solvable by using .get() to set a default key.
     - Different solution used (**try** and **except**):
     
-                    try:
+                 try:
                     for x in imdb.get("Search"):
                         if x.get('Title') == movie_query:
                             imdbid = x.get('imdbID')
